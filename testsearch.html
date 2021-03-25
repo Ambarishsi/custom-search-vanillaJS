@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>custom search</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+<br/><br />
+<input type="text" id="search" onkeyup="detectBlankSearch();"/>
+<button class="btn btn-primary" id="searchbtn">search</button>
+<br /><br />
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+    <li><a data-toggle="tab" href="#menu1">Menu 1</a></li>
+    <li><a data-toggle="tab" href="#menu2">Menu 2</a></li>
+    <li><a data-toggle="tab" href="#menu3">Menu 3</a></li>
+  </ul>
+
+  <div class="tab-content" id="tab-content">
+    <div id="home" class="tab-pane fade in active" >
+      <p id="a">atm Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+    <div id="menu1" class="tab-pane fade" >
+      <p id="b">atm Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+    <div id="menu2" class="tab-pane fade" >
+      <p id="c">atm Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+    </div>
+    <div id="menu3" class="tab-pane fade" >
+      <p id="d">atm Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6" id="">
+        <div class="alert alert-info alert-dismissible" id="containingListItem" hidden>
+           <p id="listall"></p>
+        </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6" id="containingListNode">
+        
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<script>
+   var notFound = false;
+    $(document).ready(function(){
+       
+        $("#searchbtn").click(function(){
+            let containingId = [];
+            let containingText = [];
+            let counter = 0;
+            var listOfSubstring = [];
+            const searchVal = document.getElementById("search").value;
+            const sb = searchVal.toUpperCase();
+            const cont = document.getElementsByClassName("tab-pane");
+
+            if(searchVal.length>2){
+            Array.from(cont).forEach(function(conts){
+                const title = conts.children[0].innerHTML;
+                if(title.toUpperCase().indexOf(sb)!=-1){
+                     containingId.push(conts.children[0].parentNode.id);
+                     containingText.push(conts.children[0].innerHTML);
+                }
+                else{
+                    counter++;
+                    if(cont.length == counter){
+                        $('#containingListItem').removeAttr('hidden');
+                        document.getElementById('listall').innerHTML = "no match found for <strong>"+searchVal+"</strong>";
+                        notFound = true;
+                    }
+                }
+           
+            })
+
+                    for(i=0;i<containingText.length;i++){
+                       var position = containingText[i].search(new RegExp(searchVal, "i"));
+                       var subString = containingText[i].substr(position-50, position+50);
+                       listOfSubstring.push("<div class='alert alert-success alert-dismissible' style='margin:4px 0 0 0; padding-top:2px;padding-bottom:2px;'><a href='#'' class='close' data-dismiss='alert' aria-label='close'>&times;</a><strong>"+containingId[i]+"</strong><br/><a data-toggle='tab' href=#"+containingId[i]+">"+subString+"</a></div>");
+                      }
+                    
+                      $('#containingListNode').attr('hidden',false);
+                      document.getElementById('containingListNode').innerHTML = listOfSubstring.join('');
+
+        }else{
+            $('#containingListItem').removeAttr('hidden');
+            $('#containingListNode').attr('hidden',true);
+            document.getElementById('listall').innerHTML = "please enetr 2 or more character to search";
+            notFound = true;
+           // document.getElementById('search').value='';
+        }
+
+      });
+
+      
+});
+
+function detectBlankSearch(){
+        let searchLength = document.getElementById('search').value;
+        if(searchLength.length<1){
+          $('#containingListItem').attr('hidden',true);
+          $('#containingListNode').attr('hidden',true);
+        }
+        else if(notFound == true && searchLength.length > 0 ){
+          notFound = false;
+          $('#containingListItem').attr('hidden',true);
+        }
+      }
+</script>
+
+</body>
+</html>
